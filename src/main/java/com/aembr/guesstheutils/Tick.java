@@ -3,8 +3,8 @@ package com.aembr.guesstheutils;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.*;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextCodecs;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
@@ -13,13 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Tick {
-    public List<Text> scoreboardLines;
-    public List<Text> playerListEntries;
-    public List<Text> chatMessages;
-    public Text actionBarMessage;
-    public Text title;
-    public Text subtitle;
-    public Text screenTitle;
+    public List<Component> scoreboardLines;
+    public List<Component> playerListEntries;
+    public List<Component> chatMessages;
+    public Component actionBarMessage;
+    public Component title;
+    public Component subtitle;
+    public Component screenTitle;
     public String error;
 
     public Tick() {}
@@ -48,8 +48,8 @@ public class Tick {
         }
     }
 
-    private List<Text> deserializeList(JsonElement jsonElement) {
-        List<Text> textList = new ArrayList<>();
+    private List<Component> deserializeList(JsonElement jsonElement) {
+        List<Component> textList = new ArrayList<>();
         for (JsonElement element : jsonElement.getAsJsonArray()) {
             String jsonString = element.getAsString();
             textList.add(deserializeText(jsonString));
@@ -57,17 +57,17 @@ public class Tick {
         return textList;
     }
 
-    private Text deserializeText(String jsonString) {
-        return TextCodecs.CODEC
+    private Component deserializeText(String jsonString) {
+        return ComponentSerialization.CODEC
                 .decode(JsonOps.INSTANCE, new Gson().fromJson(jsonString, JsonElement.class))
                 .getOrThrow()
                 .getFirst();
     }
 
-    public static List<String> serializeList(List<Text> input) {
+    public static List<String> serializeList(List<Component> input) {
         Gson gson = new Gson();
         return input.stream().map(text -> {
-            var result = TextCodecs.CODEC.encodeStart(JsonOps.INSTANCE, text);
+            var result = ComponentSerialization.CODEC.encodeStart(JsonOps.INSTANCE, text);
             return result
                 .map(json -> gson.toJson(json))
                 .result()
@@ -80,10 +80,10 @@ public class Tick {
         return new SerializedTick(scoreboardLines == null ? null : serializeList(scoreboardLines),
                 playerListEntries == null ? null : serializeList(playerListEntries),
                 chatMessages == null ? null : serializeList(chatMessages),
-                actionBarMessage == null ? null : gson.toJson(TextCodecs.CODEC.encodeStart(JsonOps.INSTANCE, actionBarMessage).getOrThrow()),
-                title == null ? null : gson.toJson(TextCodecs.CODEC.encodeStart(JsonOps.INSTANCE, title).getOrThrow()),
-                subtitle == null ? null : gson.toJson(TextCodecs.CODEC.encodeStart(JsonOps.INSTANCE, subtitle).getOrThrow()),
-                screenTitle == null ? null : gson.toJson(TextCodecs.CODEC.encodeStart(JsonOps.INSTANCE, screenTitle).getOrThrow()),
+                actionBarMessage == null ? null : gson.toJson(ComponentSerialization.CODEC.encodeStart(JsonOps.INSTANCE, actionBarMessage).getOrThrow()),
+                title == null ? null : gson.toJson(ComponentSerialization.CODEC.encodeStart(JsonOps.INSTANCE, title).getOrThrow()),
+                subtitle == null ? null : gson.toJson(ComponentSerialization.CODEC.encodeStart(JsonOps.INSTANCE, subtitle).getOrThrow()),
+                screenTitle == null ? null : gson.toJson(ComponentSerialization.CODEC.encodeStart(JsonOps.INSTANCE, screenTitle).getOrThrow()),
                 error);
     }
 

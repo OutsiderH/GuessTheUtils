@@ -6,11 +6,11 @@
     "defaultRequire": 1
   },
   "client": [
-    "chat_cooldown_timer.ClientPlayNetworkHandlerMixin",
-    "InGameHudMixin",
-    "custom_scoreboard.InGameHudMixin",
-    "item_hider.ItemGroup_EntriesImplMixin",
-    "item_hider.ItemGroupsMixin",
-    "name_autocomplete.ClientCommandSourceMixin"
+    "chat_cooldown_timer.ClientPacketListenerMixin",
+    "GuiMixin",
+    "custom_scoreboard.GuiMixin",
+    "item_hider.CreativeModeTab_ItemDisplayBuilderMixin",
+    "item_hider.CreativeModeTabsMixin",
+    "name_autocomplete.ClientSuggestionProviderMixin"
   ]
 }

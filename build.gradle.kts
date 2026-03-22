@@ -42,7 +42,7 @@ dependencies {
 	}
 
 	minecraft("com.mojang:minecraft:${stonecutter.current.version}")
-	mappings("net.fabricmc:yarn:${property("deps.yarn")}:v2")
+	mappings(loom.officialMojangMappings())
 	modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
 

@@ -8,8 +8,8 @@ import dev.isxander.yacl3.config.v2.api.autogen.*;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import dev.isxander.yacl3.platform.YACLPlatform;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
@@ -21,7 +21,7 @@ public class GuessTheUtilsConfig {
 
     public static final ConfigClassHandler<GuessTheUtilsConfig> CONFIG = ConfigClassHandler
             .createBuilder(GuessTheUtilsConfig.class)
-            .id(Identifier.of(GuessTheUtils.MOD_ID, "config"))
+            .id(Identifier.fromNamespaceAndPath(GuessTheUtils.MOD_ID, "config"))
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
                     .setPath(CONFIG_PATH.resolve(CONFIG_FILENAME))
                     .build())

@@ -4,9 +4,9 @@ import com.aembr.guesstheutils.GTBEvents;
 import com.aembr.guesstheutils.utils.Message;
 import com.aembr.guesstheutils.utils.Utils;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
 
 import java.util.*;
 
@@ -97,7 +97,7 @@ public class GameTracker extends GTBEvents.Module {
         game = new Game(this, players);
     }
 
-    private void onTick(MinecraftClient client) {
+    private void onTick(Minecraft client) {
         if (game == null || !events.isInGtb()) return;
         game.players.forEach(player -> player.inactiveTicks++);
         CustomScoreboard.tickCounter++;
@@ -113,7 +113,7 @@ public class GameTracker extends GTBEvents.Module {
 
     private void clearGame(String message) {
         clearGame();
-        Message.displayMessage(Text.literal(message).formatted(Formatting.RED));
+        Message.displayMessage(Component.literal(message).withStyle(ChatFormatting.RED));
     }
 
     private void clearGameWithError(String error) {
@@ -129,9 +129,9 @@ public class GameTracker extends GTBEvents.Module {
     static class Player {
         enum LeaverState { NORMAL, POTENTIAL_LEAVER, LEAVER }
         String name;
-        Formatting rank;
-        Text title;
-        Text emblem;
+        ChatFormatting rank;
+        Component title;
+        Component emblem;
         int[] points;
         int buildRound;
         boolean isUser;
@@ -139,7 +139,7 @@ public class GameTracker extends GTBEvents.Module {
         int inactiveTicks = 0;
         LeaverState leaverState = LeaverState.NORMAL;
 
-        Player(String name, Formatting rank, Text title, Text emblem, boolean isUser) {
+        Player(String name, ChatFormatting rank, Component title, Component emblem, boolean isUser) {
             this.name = name;
             this.rank = rank;
             this.title = title;

@@ -3,11 +3,11 @@ package com.aembr.guesstheutils.modules;
 import com.aembr.guesstheutils.GTBEvents;
 import com.aembr.guesstheutils.GuessTheUtils;
 import com.aembr.guesstheutils.config.GuessTheUtilsConfig;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 
 import java.util.List;
 
-import static net.minecraft.item.Items.*;
+import static net.minecraft.world.item.Items.*;
 
 public class DisallowedItemHider {
     final static List<Item> ALLOWED_ITEMS = List.of(

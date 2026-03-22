@@ -8,8 +8,11 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.text.*;
-import net.minecraft.util.Formatting;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.ChatFormatting;
 import net.minecraft.util.Util;
 
 import java.util.Map;
@@ -26,7 +29,7 @@ public class Commands {
 
                         .then(ClientCommandManager.literal("open")
                             .executes((command) -> {
-                                Util.getOperatingSystem().open(Replay.replayDir);
+                                Util.getPlatform().openPath(Replay.replayDir);
                                 return Command.SINGLE_SUCCESS;
                             })))
 
@@ -107,30 +110,30 @@ public class Commands {
                          *///?}
 
                         //? if >=1.21.5 {
-                        HoverEvent hoverEvent = new HoverEvent.ShowText(Text.literal("Click to draft this translation"));
+                        HoverEvent hoverEvent = new HoverEvent.ShowText(Component.literal("Click to draft this translation"));
                         //?} else {
                         /*HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal("Click to draft this translation"));
                          *///?}
 
-                        Text draftButtonText = Text.literal(" [Draft]").setStyle(Style.EMPTY
+                        Component draftButtonText = Component.literal(" [Draft]").setStyle(Style.EMPTY
                                 .withClickEvent(clickEvent)
                                 .withHoverEvent(hoverEvent)
-                                .withColor(Formatting.YELLOW));
+                                .withColor(ChatFormatting.YELLOW));
 
-                        Message.displayMessage(Text.empty()
-                                .append(Text.literal(theme).formatted(Formatting.GREEN))
-                                .append(Text.literal(" in ").formatted(Formatting.GRAY))
-                                .append(Text.literal(lang).formatted(Formatting.AQUA))
-                                .append(Text.literal(": ").formatted(Formatting.GRAY))
-                                .append(Text.literal(translation.translation()).formatted(Formatting.GOLD).formatted(Formatting.BOLD))
+                        Message.displayMessage(Component.empty()
+                                .append(Component.literal(theme).withStyle(ChatFormatting.GREEN))
+                                .append(Component.literal(" in ").withStyle(ChatFormatting.GRAY))
+                                .append(Component.literal(lang).withStyle(ChatFormatting.AQUA))
+                                .append(Component.literal(": ").withStyle(ChatFormatting.GRAY))
+                                .append(Component.literal(translation.translation()).withStyle(ChatFormatting.GOLD).withStyle(ChatFormatting.BOLD))
                                 .append(draftButtonText));
                     } else {
-                        Message.displayMessage(Text.empty()
-                                .append(Text.literal("No approved translation found for ").formatted(Formatting.RED))
-                                .append(Text.literal(theme).formatted(Formatting.GREEN))
-                                .append(Text.literal(" in ").formatted(Formatting.RED))
-                                .append(Text.literal(lang).formatted(Formatting.AQUA))
-                                .append(Text.literal(".").formatted(Formatting.RED)));
+                        Message.displayMessage(Component.empty()
+                                .append(Component.literal("No approved translation found for ").withStyle(ChatFormatting.RED))
+                                .append(Component.literal(theme).withStyle(ChatFormatting.GREEN))
+                                .append(Component.literal(" in ").withStyle(ChatFormatting.RED))
+                                .append(Component.literal(lang).withStyle(ChatFormatting.AQUA))
+                                .append(Component.literal(".").withStyle(ChatFormatting.RED)));
                     }
                 });
     }

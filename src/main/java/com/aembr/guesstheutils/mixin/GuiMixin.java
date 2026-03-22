@@ -1,24 +1,24 @@
 package com.aembr.guesstheutils.mixin;
 
 import com.aembr.guesstheutils.GuessTheUtils;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.scoreboard.ScoreboardObjective;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.world.scores.Objective;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(InGameHud.class)
-public class InGameHudMixin {
+@Mixin(Gui.class)
+public class GuiMixin {
 	@Inject(at = @At("HEAD"), method = "setTitle")
-	private void onSetTitle(Text title, CallbackInfo ci) {
+	private void onSetTitle(Component title, CallbackInfo ci) {
 		GuessTheUtils.onTitleSet(title);
 	}
 
 	@Inject(at = @At("HEAD"), method = "setSubtitle")
-	private void onSetSubtitle(Text subtitle, CallbackInfo ci) {
+	private void onSetSubtitle(Component subtitle, CallbackInfo ci) {
 		GuessTheUtils.onSubtitleSet(subtitle);
 	}
 }

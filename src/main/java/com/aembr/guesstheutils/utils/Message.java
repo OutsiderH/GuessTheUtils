@@ -1,29 +1,29 @@
 package com.aembr.guesstheutils.utils;
 
 import com.aembr.guesstheutils.GuessTheUtils;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
 
 public class Message {
     public static void sendMessage(String message) {
         if (GuessTheUtils.CLIENT.player != null) {
             if (message.startsWith("/")) {
-                GuessTheUtils.CLIENT.player.networkHandler.sendChatCommand(message.substring(1));
+                GuessTheUtils.CLIENT.player.connection.sendCommand(message.substring(1));
             } else {
-                GuessTheUtils.CLIENT.inGameHud.getChatHud().addToMessageHistory(message);
-                GuessTheUtils.CLIENT.player.networkHandler.sendChatMessage(message);
+                GuessTheUtils.CLIENT.gui.getChat().addRecentChat(message);
+                GuessTheUtils.CLIENT.player.connection.sendChat(message);
             }
         }
     }
 
     public static void displayMessage(String message) {
         if (GuessTheUtils.CLIENT == null || GuessTheUtils.CLIENT.player == null) return;
-        GuessTheUtils.CLIENT.player.sendMessage(GuessTheUtils.prefix.copy()
-                .append(Text.literal(message).formatted(Formatting.GRAY)), false);
+        GuessTheUtils.CLIENT.player.displayClientMessage(GuessTheUtils.prefix.copy()
+                .append(Component.literal(message).withStyle(ChatFormatting.GRAY)), false);
     }
 
-    public static void displayMessage(Text message) {
+    public static void displayMessage(Component message) {
         if (GuessTheUtils.CLIENT == null || GuessTheUtils.CLIENT.player == null) return;
-        GuessTheUtils.CLIENT.player.sendMessage(GuessTheUtils.prefix.copy().append(message), false);
+        GuessTheUtils.CLIENT.player.displayClientMessage(GuessTheUtils.prefix.copy().append(message), false);
     }
 }

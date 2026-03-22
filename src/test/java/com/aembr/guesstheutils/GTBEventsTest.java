@@ -1,9 +1,9 @@
 package com.aembr.guesstheutils;
 
-import net.minecraft.Bootstrap;
+import net.minecraft.server.Bootstrap;
 import net.minecraft.SharedConstants;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -18,8 +18,8 @@ public class GTBEventsTest {
 
     @BeforeAll
     public static void beforeAll() {
-        SharedConstants.createGameVersion();
-        Bootstrap.initialize();
+        SharedConstants.tryDetectVersion();
+        Bootstrap.bootStrap();
     }
 
     @BeforeEach
@@ -49,15 +49,15 @@ public class GTBEventsTest {
         assert event instanceof GTBEvents.GameStartEvent;
 
         Set<GTBEvents.InitialPlayerData> expected = new HashSet<>(List.of(
-                new GTBEvents.InitialPlayerData("bubulS", Text.literal("Expert").formatted(Formatting.DARK_RED), Text.literal("$").formatted(Formatting.BLACK), Formatting.GREEN, false),
-                new GTBEvents.InitialPlayerData("KoboIdus", Text.literal("Untrained").formatted(Formatting.GRAY), Text.empty(), Formatting.GRAY, false),
-                new GTBEvents.InitialPlayerData("JARAKURE", Text.literal("Rookie").formatted(Formatting.WHITE), Text.empty(), Formatting.GRAY, false),
-                new GTBEvents.InitialPlayerData("Fazelin", Text.literal("Amateur").formatted(Formatting.DARK_GRAY), Text.empty(), Formatting.GRAY, false),
-                new GTBEvents.InitialPlayerData("FINMINETK", Text.literal("Apprentice").formatted(Formatting.DARK_GREEN), Text.empty(), Formatting.GRAY, false),
-                new GTBEvents.InitialPlayerData("Nekst_off", Text.literal("Experienced").formatted(Formatting.AQUA), Text.empty(), Formatting.GRAY, false),
-                new GTBEvents.InitialPlayerData("Yria", Text.literal("Expert").formatted(Formatting.DARK_RED), Text.literal("≈").formatted(Formatting.YELLOW), Formatting.AQUA, true),
-                new GTBEvents.InitialPlayerData("SerdarLunatix", Text.literal("Rookie").formatted(Formatting.WHITE), Text.empty(), Formatting.GRAY, false),
-                new GTBEvents.InitialPlayerData("Video_Virus2", Text.literal("Untrained").formatted(Formatting.GRAY), Text.empty(), Formatting.GRAY, false)
+                new GTBEvents.InitialPlayerData("bubulS", Component.literal("Expert").withStyle(ChatFormatting.DARK_RED), Component.literal("$").withStyle(ChatFormatting.BLACK), ChatFormatting.GREEN, false),
+                new GTBEvents.InitialPlayerData("KoboIdus", Component.literal("Untrained").withStyle(ChatFormatting.GRAY), Component.empty(), ChatFormatting.GRAY, false),
+                new GTBEvents.InitialPlayerData("JARAKURE", Component.literal("Rookie").withStyle(ChatFormatting.WHITE), Component.empty(), ChatFormatting.GRAY, false),
+                new GTBEvents.InitialPlayerData("Fazelin", Component.literal("Amateur").withStyle(ChatFormatting.DARK_GRAY), Component.empty(), ChatFormatting.GRAY, false),
+                new GTBEvents.InitialPlayerData("FINMINETK", Component.literal("Apprentice").withStyle(ChatFormatting.DARK_GREEN), Component.empty(), ChatFormatting.GRAY, false),
+                new GTBEvents.InitialPlayerData("Nekst_off", Component.literal("Experienced").withStyle(ChatFormatting.AQUA), Component.empty(), ChatFormatting.GRAY, false),
+                new GTBEvents.InitialPlayerData("Yria", Component.literal("Expert").withStyle(ChatFormatting.DARK_RED), Component.literal("≈").withStyle(ChatFormatting.YELLOW), ChatFormatting.AQUA, true),
+                new GTBEvents.InitialPlayerData("SerdarLunatix", Component.literal("Rookie").withStyle(ChatFormatting.WHITE), Component.empty(), ChatFormatting.GRAY, false),
+                new GTBEvents.InitialPlayerData("Video_Virus2", Component.literal("Untrained").withStyle(ChatFormatting.GRAY), Component.empty(), ChatFormatting.GRAY, false)
         ));
         Set<GTBEvents.InitialPlayerData> actual = ((GTBEvents.GameStartEvent) event).players();
         assert actual.equals(expected) : "Expected:\n" + expected + "\nActual:\n" + actual;
@@ -74,15 +74,15 @@ public class GTBEventsTest {
         assert event instanceof GTBEvents.GameStartEvent;
 
         Set<GTBEvents.InitialPlayerData> expected = new HashSet<>(List.of(
-                new GTBEvents.InitialPlayerData("bubulS", Text.literal("Expert").formatted(Formatting.DARK_RED), Text.literal("$").formatted(Formatting.BLACK), Formatting.GREEN, false),
-                new GTBEvents.InitialPlayerData("KoboIdus", Text.literal("Untrained").formatted(Formatting.GRAY), Text.empty(), Formatting.GRAY, false),
-                new GTBEvents.InitialPlayerData("JARAKURE", Text.literal("Rookie").formatted(Formatting.WHITE), Text.empty(), Formatting.GRAY, false),
-                new GTBEvents.InitialPlayerData("Fazelin", Text.literal("Amateur").formatted(Formatting.DARK_GRAY), Text.empty(), Formatting.GRAY, false),
-                new GTBEvents.InitialPlayerData("FINMINETK", Text.literal("Apprentice").formatted(Formatting.DARK_GREEN), Text.empty(), Formatting.GRAY, false),
-                new GTBEvents.InitialPlayerData("Nekst_off", Text.literal("Experienced").formatted(Formatting.AQUA), Text.empty(), Formatting.GRAY, false),
-                new GTBEvents.InitialPlayerData("Yria", Text.literal("Expert").formatted(Formatting.DARK_RED), Text.literal("≈").formatted(Formatting.YELLOW), Formatting.AQUA, true),
-                new GTBEvents.InitialPlayerData("SerdarLunatix", Text.literal("Rookie").formatted(Formatting.WHITE), Text.empty(), Formatting.GRAY, false),
-                new GTBEvents.InitialPlayerData("Video_Virus2", Text.literal("Untrained").formatted(Formatting.GRAY), Text.empty(), Formatting.GRAY, false)
+                new GTBEvents.InitialPlayerData("bubulS", Component.literal("Expert").withStyle(ChatFormatting.DARK_RED), Component.literal("$").withStyle(ChatFormatting.BLACK), ChatFormatting.GREEN, false),
+                new GTBEvents.InitialPlayerData("KoboIdus", Component.literal("Untrained").withStyle(ChatFormatting.GRAY), Component.empty(), ChatFormatting.GRAY, false),
+                new GTBEvents.InitialPlayerData("JARAKURE", Component.literal("Rookie").withStyle(ChatFormatting.WHITE), Component.empty(), ChatFormatting.GRAY, false),
+                new GTBEvents.InitialPlayerData("Fazelin", Component.literal("Amateur").withStyle(ChatFormatting.DARK_GRAY), Component.empty(), ChatFormatting.GRAY, false),
+                new GTBEvents.InitialPlayerData("FINMINETK", Component.literal("Apprentice").withStyle(ChatFormatting.DARK_GREEN), Component.empty(), ChatFormatting.GRAY, false),
+                new GTBEvents.InitialPlayerData("Nekst_off", Component.literal("Experienced").withStyle(ChatFormatting.AQUA), Component.empty(), ChatFormatting.GRAY, false),
+                new GTBEvents.InitialPlayerData("Yria", Component.literal("Expert").withStyle(ChatFormatting.DARK_RED), Component.literal("≈").withStyle(ChatFormatting.YELLOW), ChatFormatting.AQUA, true),
+                new GTBEvents.InitialPlayerData("SerdarLunatix", Component.literal("Rookie").withStyle(ChatFormatting.WHITE), Component.empty(), ChatFormatting.GRAY, false),
+                new GTBEvents.InitialPlayerData("Video_Virus2", Component.literal("Untrained").withStyle(ChatFormatting.GRAY), Component.empty(), ChatFormatting.GRAY, false)
         ));
         Set<GTBEvents.InitialPlayerData> actual = ((GTBEvents.GameStartEvent) event).players();
         assert actual.equals(expected) : "Expected:\n" + expected + "\nActual:\n" + actual;
@@ -110,15 +110,15 @@ public class GTBEventsTest {
         assert event instanceof GTBEvents.GameStartEvent;
 
         Set<GTBEvents.InitialPlayerData> expected = new HashSet<>(List.of(
-                new GTBEvents.InitialPlayerData("Mstf", Text.literal("Amateur").formatted(Formatting.DARK_GRAY), Text.empty(), Formatting.GOLD, false),
-                new GTBEvents.InitialPlayerData("Cazzeeee", Text.literal("Prospect").formatted(Formatting.GREEN), Text.empty(), Formatting.GRAY, false),
-                new GTBEvents.InitialPlayerData("NotAcomy", Text.literal("Rookie").formatted(Formatting.WHITE), Text.empty(), Formatting.AQUA, false),
-                new GTBEvents.InitialPlayerData("P4t_o", Text.literal("Rookie").formatted(Formatting.WHITE), Text.empty(), Formatting.AQUA, false),
-                new GTBEvents.InitialPlayerData("Lanyingtears", Text.literal("Rookie").formatted(Formatting.WHITE), Text.empty(), Formatting.AQUA, false),
-                new GTBEvents.InitialPlayerData("Yria", Text.literal("Expert").formatted(Formatting.DARK_RED), Text.literal("≈").formatted(Formatting.YELLOW), Formatting.AQUA, true),
-                new GTBEvents.InitialPlayerData("Ao0j", Text.literal("Trained").formatted(Formatting.BLUE), Text.empty(), Formatting.GRAY, false),
-                new GTBEvents.InitialPlayerData("Rinkutako", Text.literal("Untrained").formatted(Formatting.GRAY), Text.empty(), Formatting.GRAY, false),
-                new GTBEvents.InitialPlayerData("PepinoCL", Text.literal("Rookie").formatted(Formatting.WHITE), Text.empty(), Formatting.GRAY, false)
+                new GTBEvents.InitialPlayerData("Mstf", Component.literal("Amateur").withStyle(ChatFormatting.DARK_GRAY), Component.empty(), ChatFormatting.GOLD, false),
+                new GTBEvents.InitialPlayerData("Cazzeeee", Component.literal("Prospect").withStyle(ChatFormatting.GREEN), Component.empty(), ChatFormatting.GRAY, false),
+                new GTBEvents.InitialPlayerData("NotAcomy", Component.literal("Rookie").withStyle(ChatFormatting.WHITE), Component.empty(), ChatFormatting.AQUA, false),
+                new GTBEvents.InitialPlayerData("P4t_o", Component.literal("Rookie").withStyle(ChatFormatting.WHITE), Component.empty(), ChatFormatting.AQUA, false),
+                new GTBEvents.InitialPlayerData("Lanyingtears", Component.literal("Rookie").withStyle(ChatFormatting.WHITE), Component.empty(), ChatFormatting.AQUA, false),
+                new GTBEvents.InitialPlayerData("Yria", Component.literal("Expert").withStyle(ChatFormatting.DARK_RED), Component.literal("≈").withStyle(ChatFormatting.YELLOW), ChatFormatting.AQUA, true),
+                new GTBEvents.InitialPlayerData("Ao0j", Component.literal("Trained").withStyle(ChatFormatting.BLUE), Component.empty(), ChatFormatting.GRAY, false),
+                new GTBEvents.InitialPlayerData("Rinkutako", Component.literal("Untrained").withStyle(ChatFormatting.GRAY), Component.empty(), ChatFormatting.GRAY, false),
+                new GTBEvents.InitialPlayerData("PepinoCL", Component.literal("Rookie").withStyle(ChatFormatting.WHITE), Component.empty(), ChatFormatting.GRAY, false)
         ));
         Set<GTBEvents.InitialPlayerData> actual = ((GTBEvents.GameStartEvent) event).players();
         assert actual.equals(expected) : "Expected:\n" + expected + "\nActual:\n" + actual;
@@ -135,14 +135,14 @@ public class GTBEventsTest {
         assert event instanceof GTBEvents.GameStartEvent;
 
         Set<GTBEvents.InitialPlayerData> expected = new HashSet<>(List.of(
-                new GTBEvents.InitialPlayerData("Nescafe755", Text.literal("Master").formatted(Formatting.GOLD), Text.literal("$").formatted(Formatting.YELLOW), Formatting.GOLD, false),
-                new GTBEvents.InitialPlayerData("Yria", Text.literal("Master").formatted(Formatting.GOLD), Text.literal("≈").formatted(Formatting.YELLOW), Formatting.GOLD, true),
-                new GTBEvents.InitialPlayerData("xShadow231x", Text.literal("Untrained").formatted(Formatting.GRAY), Text.empty(), Formatting.GRAY, false),
-                new GTBEvents.InitialPlayerData("BELbimba", Text.literal("Experienced").formatted(Formatting.AQUA), Text.empty(), Formatting.GRAY, false),
-                new GTBEvents.InitialPlayerData("fitzlander", null, null, Formatting.GRAY, false),
-                new GTBEvents.InitialPlayerData("NatpDak", null, null, Formatting.AQUA, false),
-                new GTBEvents.InitialPlayerData("glenda89", null, null, Formatting.GRAY, false),
-                new GTBEvents.InitialPlayerData("Gyroburg", null, null, Formatting.AQUA, false)
+                new GTBEvents.InitialPlayerData("Nescafe755", Component.literal("Master").withStyle(ChatFormatting.GOLD), Component.literal("$").withStyle(ChatFormatting.YELLOW), ChatFormatting.GOLD, false),
+                new GTBEvents.InitialPlayerData("Yria", Component.literal("Master").withStyle(ChatFormatting.GOLD), Component.literal("≈").withStyle(ChatFormatting.YELLOW), ChatFormatting.GOLD, true),
+                new GTBEvents.InitialPlayerData("xShadow231x", Component.literal("Untrained").withStyle(ChatFormatting.GRAY), Component.empty(), ChatFormatting.GRAY, false),
+                new GTBEvents.InitialPlayerData("BELbimba", Component.literal("Experienced").withStyle(ChatFormatting.AQUA), Component.empty(), ChatFormatting.GRAY, false),
+                new GTBEvents.InitialPlayerData("fitzlander", null, null, ChatFormatting.GRAY, false),
+                new GTBEvents.InitialPlayerData("NatpDak", null, null, ChatFormatting.AQUA, false),
+                new GTBEvents.InitialPlayerData("glenda89", null, null, ChatFormatting.GRAY, false),
+                new GTBEvents.InitialPlayerData("Gyroburg", null, null, ChatFormatting.AQUA, false)
         ));
         Set<GTBEvents.InitialPlayerData> actual = ((GTBEvents.GameStartEvent) event).players();
         assert actual.equals(expected) : "Expected:\n" + expected + "\nActual:\n" + actual;
@@ -159,16 +159,16 @@ public class GTBEventsTest {
         assert event instanceof GTBEvents.GameStartEvent;
 
         Set<GTBEvents.InitialPlayerData> expected = new HashSet<>(List.of(
-                new GTBEvents.InitialPlayerData("owwwwen", null, null, Formatting.GREEN, false),
-                new GTBEvents.InitialPlayerData("Nescafe755", Text.literal("Expert").formatted(Formatting.DARK_RED), Text.literal("$").formatted(Formatting.BLACK), Formatting.GOLD, false),
-                new GTBEvents.InitialPlayerData("Coldflames19", Text.literal("Prospect").formatted(Formatting.GREEN), Text.empty(), Formatting.GRAY, false),
-                new GTBEvents.InitialPlayerData("AK4Boris", Text.literal("Prospect").formatted(Formatting.GREEN), Text.empty(), Formatting.GRAY, false),
-                new GTBEvents.InitialPlayerData("Aceptum", null, null, Formatting.AQUA, false),
-                new GTBEvents.InitialPlayerData("Yria", Text.literal("Expert").formatted(Formatting.DARK_RED), Text.literal("≈").formatted(Formatting.YELLOW), Formatting.GOLD, true),
-                new GTBEvents.InitialPlayerData("vautism", null, null, Formatting.GOLD, false),
-                new GTBEvents.InitialPlayerData("SophieLacksTeeth", Text.literal("Skilled").formatted(Formatting.DARK_BLUE), Text.empty(), Formatting.GREEN, false),
-                new GTBEvents.InitialPlayerData("vixyi", null, null, Formatting.GRAY, false),
-                new GTBEvents.InitialPlayerData("watahfall", Text.literal("Expert").formatted(Formatting.DARK_RED), Text.literal("$").formatted(Formatting.BLACK), Formatting.GOLD, false)
+                new GTBEvents.InitialPlayerData("owwwwen", null, null, ChatFormatting.GREEN, false),
+                new GTBEvents.InitialPlayerData("Nescafe755", Component.literal("Expert").withStyle(ChatFormatting.DARK_RED), Component.literal("$").withStyle(ChatFormatting.BLACK), ChatFormatting.GOLD, false),
+                new GTBEvents.InitialPlayerData("Coldflames19", Component.literal("Prospect").withStyle(ChatFormatting.GREEN), Component.empty(), ChatFormatting.GRAY, false),
+                new GTBEvents.InitialPlayerData("AK4Boris", Component.literal("Prospect").withStyle(ChatFormatting.GREEN), Component.empty(), ChatFormatting.GRAY, false),
+                new GTBEvents.InitialPlayerData("Aceptum", null, null, ChatFormatting.AQUA, false),
+                new GTBEvents.InitialPlayerData("Yria", Component.literal("Expert").withStyle(ChatFormatting.DARK_RED), Component.literal("≈").withStyle(ChatFormatting.YELLOW), ChatFormatting.GOLD, true),
+                new GTBEvents.InitialPlayerData("vautism", null, null, ChatFormatting.GOLD, false),
+                new GTBEvents.InitialPlayerData("SophieLacksTeeth", Component.literal("Skilled").withStyle(ChatFormatting.DARK_BLUE), Component.empty(), ChatFormatting.GREEN, false),
+                new GTBEvents.InitialPlayerData("vixyi", null, null, ChatFormatting.GRAY, false),
+                new GTBEvents.InitialPlayerData("watahfall", Component.literal("Expert").withStyle(ChatFormatting.DARK_RED), Component.literal("$").withStyle(ChatFormatting.BLACK), ChatFormatting.GOLD, false)
         ));
         Set<GTBEvents.InitialPlayerData> actual = ((GTBEvents.GameStartEvent) event).players();
         assert actual.equals(expected) : "Expected:\n" + expected + "\nActual:\n" + actual;
@@ -248,13 +248,13 @@ public class GTBEventsTest {
         GTBEvents.BaseEvent event = listener.receivedEvents.get(0);
         assert event instanceof GTBEvents.CorrectGuessEvent;
         assert ((GTBEvents.CorrectGuessEvent) event).players().equals(List.of(
-                new GTBEvents.FormattedName("TroyBoy105", Formatting.GRAY)));
+                new GTBEvents.FormattedName("TroyBoy105", ChatFormatting.GRAY)));
 
         event = listener.receivedEvents.get(1);
         assert event instanceof GTBEvents.CorrectGuessEvent;
         assert ((GTBEvents.CorrectGuessEvent) event).players().equals(List.of(
-                new GTBEvents.FormattedName("Yria", Formatting.AQUA),
-                new GTBEvents.FormattedName("nikIII123", Formatting.GRAY)));
+                new GTBEvents.FormattedName("Yria", ChatFormatting.AQUA),
+                new GTBEvents.FormattedName("nikIII123", ChatFormatting.GRAY)));
     }
 
     @Test
@@ -414,10 +414,10 @@ public class GTBEventsTest {
         List<GTBEvents.TrueScore> a1 = events.getTrueScoresFromScoreboard(runner.next().scoreboardLines);
 
         List<GTBEvents.TrueScore> e1 = List.of(
-                new GTBEvents.TrueScore(new GTBEvents.FormattedName("_emmy", Formatting.GOLD), 3),
-                new GTBEvents.TrueScore(new GTBEvents.FormattedName("theofficialwater", Formatting.AQUA), 3),
-                new GTBEvents.TrueScore(new GTBEvents.FormattedName("Nescafe755", Formatting.GOLD), 2),
-                new GTBEvents.TrueScore(new GTBEvents.FormattedName("Yria", Formatting.GOLD), 1)
+                new GTBEvents.TrueScore(new GTBEvents.FormattedName("_emmy", ChatFormatting.GOLD), 3),
+                new GTBEvents.TrueScore(new GTBEvents.FormattedName("theofficialwater", ChatFormatting.AQUA), 3),
+                new GTBEvents.TrueScore(new GTBEvents.FormattedName("Nescafe755", ChatFormatting.GOLD), 2),
+                new GTBEvents.TrueScore(new GTBEvents.FormattedName("Yria", ChatFormatting.GOLD), 1)
         );
 
         assert a1.equals(e1) : "Actual:\n" + a1 + "\nExpected:\n" + e1;
@@ -425,8 +425,8 @@ public class GTBEventsTest {
         List<GTBEvents.TrueScore> a2 = events.getTrueScoresFromScoreboard(runner.next().scoreboardLines);
 
         List<GTBEvents.TrueScore> e2 = List.of(
-                new GTBEvents.TrueScore(new GTBEvents.FormattedName("Yria", Formatting.GOLD), 0),
-                new GTBEvents.TrueScore(new GTBEvents.FormattedName("Nescafe755", Formatting.GOLD), 0)
+                new GTBEvents.TrueScore(new GTBEvents.FormattedName("Yria", ChatFormatting.GOLD), 0),
+                new GTBEvents.TrueScore(new GTBEvents.FormattedName("Nescafe755", ChatFormatting.GOLD), 0)
         );
 
         assert a2.equals(e2) : "Actual:\n" + a2 + "\nExpected:\n" + e2;
@@ -434,9 +434,9 @@ public class GTBEventsTest {
         List<GTBEvents.TrueScore> a3 = events.getTrueScoresFromScoreboard(runner.next().scoreboardLines);
 
         List<GTBEvents.TrueScore> e3 = List.of(
-                new GTBEvents.TrueScore(new GTBEvents.FormattedName("_emmy", Formatting.GOLD), 9),
-                new GTBEvents.TrueScore(new GTBEvents.FormattedName("theofficialwater", Formatting.AQUA), 5),
-                new GTBEvents.TrueScore(new GTBEvents.FormattedName("Yria", Formatting.GOLD), 4)
+                new GTBEvents.TrueScore(new GTBEvents.FormattedName("_emmy", ChatFormatting.GOLD), 9),
+                new GTBEvents.TrueScore(new GTBEvents.FormattedName("theofficialwater", ChatFormatting.AQUA), 5),
+                new GTBEvents.TrueScore(new GTBEvents.FormattedName("Yria", ChatFormatting.GOLD), 4)
         );
 
         assert a3.equals(e3) : "Actual:\n" + a3 + "\nExpected:\n" + e3;

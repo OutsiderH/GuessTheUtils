@@ -11,11 +11,11 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 //? if <1.21.6
 /*import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;*/
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,11 +25,11 @@ import java.util.List;
 public class GuessTheUtils implements ClientModInitializer {
     public static final String MOD_ID = "guesstheutils";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-    public static final MinecraftClient CLIENT = MinecraftClient.getInstance();
+    public static final Minecraft CLIENT = Minecraft.getInstance();
 
-    public static final MutableText prefix = Text.literal("[").formatted(Formatting.WHITE)
-            .append(Text.literal("GTU").formatted(Formatting.GOLD))
-            .append(Text.literal("] ").formatted(Formatting.WHITE));
+    public static final MutableComponent prefix = Component.literal("[").withStyle(ChatFormatting.WHITE)
+            .append(Component.literal("GTU").withStyle(ChatFormatting.GOLD))
+            .append(Component.literal("] ").withStyle(ChatFormatting.WHITE));
 
     public static final Replay replay = new Replay();
     public static GTBEvents events = new GTBEvents();
@@ -45,10 +45,10 @@ public class GuessTheUtils implements ClientModInitializer {
     public static LiveE2ERunner liveE2ERunner;
 
     private static Tick currentTick;
-    private List<Text> previousScoreboardLines = new ArrayList<>();
-    private List<Text> previousPlayerListEntries = new ArrayList<>();
-    private Text previousActionBarMessage = Text.empty();
-    private Text previousScreenTitle = Text.empty();
+    private List<Component> previousScoreboardLines = new ArrayList<>();
+    private List<Component> previousPlayerListEntries = new ArrayList<>();
+    private Component previousActionBarMessage = Component.empty();
+    private Component previousScreenTitle = Component.empty();
 
     public static boolean openConfig = false;
 
@@ -79,9 +79,9 @@ public class GuessTheUtils implements ClientModInitializer {
         GuessTheUtilsConfig.CONFIG.load();
     }
 
-    private void onStartTick(MinecraftClient client) {
+    private void onStartTick(Minecraft client) {
         if (openConfig) {
-            Screen configScreen = GuessTheUtilsConfig.createScreen(client.currentScreen);
+            Screen configScreen = GuessTheUtilsConfig.createScreen(client.screen);
             client.setScreen(configScreen);
             openConfig = false;
         }
@@ -121,34 +121,34 @@ public class GuessTheUtils implements ClientModInitializer {
 
         onScoreboardUpdate(Utils.getScoreboardLines(client));
         onPlayerListUpdate(Utils.collectTabListEntries(client));
-        Text screenTitle = CLIENT.currentScreen == null ? Text.empty() : CLIENT.currentScreen.getTitle();
+        Component screenTitle = CLIENT.screen == null ? Component.empty() : CLIENT.screen.getTitle();
         onScreenUpdate(screenTitle);
     }
 
-    private void onScreenUpdate(Text screenTitle) {
+    private void onScreenUpdate(Component screenTitle) {
         if (currentTick == null) return;
         if (previousScreenTitle.equals(screenTitle)) return;
         previousScreenTitle = screenTitle;
         currentTick.screenTitle = screenTitle;
     }
 
-    private void onScoreboardUpdate(List<Text> scoreboardLines) {
+    private void onScoreboardUpdate(List<Component> scoreboardLines) {
         if (currentTick == null) return;
         if (previousScoreboardLines.equals(scoreboardLines)) return;
         previousScoreboardLines = scoreboardLines;
         currentTick.scoreboardLines = scoreboardLines;
     }
 
-    private void onPlayerListUpdate(List<Text> playerListEntries) {
+    private void onPlayerListUpdate(List<Component> playerListEntries) {
         if (currentTick == null) return;
         if (previousPlayerListEntries.equals(playerListEntries)) return;
         previousPlayerListEntries = playerListEntries;
         currentTick.playerListEntries = playerListEntries;
     }
 
-    private void onChatMessage(Text message) {
+    private void onChatMessage(Component message) {
         // We don't want guild, party, or direct messages to be processed, or end up in replays
-        String stripped = Formatting.strip(message.getString());
+        String stripped = ChatFormatting.stripFormatting(message.getString());
         if (stripped == null
                 || stripped.startsWith("Guild > ")
                 || stripped.startsWith("Party > ")
@@ -159,19 +159,19 @@ public class GuessTheUtils implements ClientModInitializer {
         currentTick.chatMessages.add(message);
     }
 
-    private void onActionBarMessage(Text message) {
+    private void onActionBarMessage(Component message) {
         if (currentTick == null) return;
         if (previousActionBarMessage.equals(message)) return;
         previousActionBarMessage = message;
         currentTick.actionBarMessage = message;
     }
 
-    public static void onTitleSet(Text title) {
+    public static void onTitleSet(Component title) {
         if (currentTick == null) return;
         currentTick.title = title;
     }
 
-    public static void onSubtitleSet(Text subtitle) {
+    public static void onSubtitleSet(Component subtitle) {
         if (currentTick == null) return;
         currentTick.subtitle = subtitle;
     }

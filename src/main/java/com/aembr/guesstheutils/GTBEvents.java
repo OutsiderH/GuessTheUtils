@@ -2,9 +2,9 @@ package com.aembr.guesstheutils;
 
 import com.aembr.guesstheutils.utils.Message;
 import com.aembr.guesstheutils.utils.Utils;
-import net.minecraft.text.Text;
-import net.minecraft.text.TextColor;
-import net.minecraft.util.Formatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextColor;
+import net.minecraft.ChatFormatting;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -56,8 +56,8 @@ public class GTBEvents {
 
     public enum GameState { NONE, LOBBY, SETUP, ROUND_PRE, ROUND_BUILD, ROUND_END, POST_GAME }
 
-    private final Utils.FixedSizeBuffer<List<Text>> scoreboardLineHistory = new Utils.FixedSizeBuffer<>(3);
-    private final Utils.FixedSizeBuffer<List<Text>> playerListEntryHistory = new Utils.FixedSizeBuffer<>(3);
+    private final Utils.FixedSizeBuffer<List<Component>> scoreboardLineHistory = new Utils.FixedSizeBuffer<>(3);
+    private final Utils.FixedSizeBuffer<List<Component>> playerListEntryHistory = new Utils.FixedSizeBuffer<>(3);
 
     private final String[] validEmblems = new String[]{"≈", "α", "Ω", "$", "π", "ƒ"};
     private final String[] validTitles = new String[]{"Rookie", "Untrained", "Amateur", "Prospect", "Apprentice",
@@ -79,8 +79,8 @@ public class GTBEvents {
     private Tick currentTick;
     public GameState gameState = GameState.NONE;
 
-    private List<Text> lobbyPlayerList = new ArrayList<>();
-    private List<Text> setupPlayerList = new ArrayList<>();
+    private List<Component> lobbyPlayerList = new ArrayList<>();
+    private List<Component> setupPlayerList = new ArrayList<>();
     private String currentBuilder = "";
     private String currentTheme = "";
     private String currentTimer = "";
@@ -104,7 +104,7 @@ public class GTBEvents {
         if (tick.screenTitle != null) onScreenTitle(tick.screenTitle);
     }
 
-    private void onPlayerListUpdate(List<Text> playerListEntries) {
+    private void onPlayerListUpdate(List<Component> playerListEntries) {
         if (gameState.equals(GameState.LOBBY)) lobbyPlayerList = playerListEntries;
         if (gameState.equals(GameState.SETUP) && setupPlayerList.isEmpty()) {
             //if (playerListEntries.stream().noneMatch(entry -> entry.getSiblings().isEmpty())) return;
@@ -113,8 +113,8 @@ public class GTBEvents {
         }
     }
 
-    private void onScoreboardUpdate(List<Text> scoreboardLines) {
-        List<String> stringLines = scoreboardLines.stream().map(line -> Formatting.strip(line.getString())).toList();
+    private void onScoreboardUpdate(List<Component> scoreboardLines) {
+        List<String> stringLines = scoreboardLines.stream().map(line -> ChatFormatting.stripFormatting(line.getString())).toList();
         GameState state = getStateFromScoreboard(stringLines);
 
         if (gameState.equals(GameState.LOBBY) && state == null) {
@@ -174,18 +174,18 @@ public class GTBEvents {
     }
 
     @SuppressWarnings("SequencedCollectionMethodCanBeUsed")
-    private void onGameStart(List<Text> lobbyList, List<Text> setupList, List<Text> finalList) {
+    private void onGameStart(List<Component> lobbyList, List<Component> setupList, List<Component> finalList) {
 //        System.out.println("lobby list: " + lobbyList);
 //        System.out.println("setup list: " + setupList);
 //        System.out.println("final list: " + finalList);
 
         List<InitialPlayerData> players = new ArrayList<InitialPlayerData>();
-        for (Text playerEntry : finalList) {
+        for (Component playerEntry : finalList) {
             String name = playerEntry.getSiblings().isEmpty() ?
-                    playerEntry.getString() : playerEntry.getSiblings().get(1).getLiteralString();
+                    playerEntry.getString() : playerEntry.getSiblings().get(1).tryCollapseToString();
 
-            Text title = null;
-            Text emblem = null;
+            Component title = null;
+            Component emblem = null;
             if (!playerEntry.getSiblings().isEmpty()) {
                 if (playerEntry.getSiblings().get(0).getSiblings().isEmpty()) {
                     // new
@@ -205,25 +205,25 @@ public class GTBEvents {
                 }
 
                 // trim spaces
-                title = Text.literal(title.getString().trim()).setStyle(title.getStyle());
-                emblem = Text.literal(emblem.getString().trim()).setStyle(emblem.getStyle());
+                title = Component.literal(title.getString().trim()).setStyle(title.getStyle());
+                emblem = Component.literal(emblem.getString().trim()).setStyle(emblem.getStyle());
 
                 if (emblem.getString().equals("")) {
                     // empty emblem
-                    emblem = Text.empty();
+                    emblem = Component.empty();
                 }
             }
 
             players.add(new InitialPlayerData(name, title, emblem, null, false));
         }
 
-        for (Text playerEntry : lobbyList) {
-            String name = Formatting.strip(playerEntry.getString());
+        for (Component playerEntry : lobbyList) {
+            String name = ChatFormatting.stripFormatting(playerEntry.getString());
             TextColor styleColor = playerEntry.getStyle().getColor();
             if (styleColor == null) {
                 continue;
             }
-            Formatting rankColor = Formatting.byName(styleColor.getName());
+            ChatFormatting rankColor = ChatFormatting.getByName(styleColor.serialize());
 
 
             InitialPlayerData player = players.stream().filter(p -> p.name.equals(name)).findAny().orElse(null);
@@ -234,11 +234,11 @@ public class GTBEvents {
             }
         }
 
-        Text setupEntry = setupList.stream().filter(
+        Component setupEntry = setupList.stream().filter(
                 entry -> !entry.getStyle().isEmpty()).findFirst().orElse(null);
 
         if (setupEntry != null) {
-            String name = Formatting.strip(setupEntry.getString());
+            String name = ChatFormatting.stripFormatting(setupEntry.getString());
             InitialPlayerData player = players.stream().filter(p -> p.name.equals(name)).findAny().orElse(null);
             if (player == null) {
                 players.add(new InitialPlayerData(name, null, null, null, true));
@@ -261,9 +261,9 @@ public class GTBEvents {
     }
 
 
-    private void onGameEnd(List<Text> scoreboardLines) {
+    private void onGameEnd(List<Component> scoreboardLines) {
         Map<String, Integer> actualScores = new HashMap<>();
-        scoreboardLines.stream().map(line -> Formatting.strip(line.getString()))
+        scoreboardLines.stream().map(line -> ChatFormatting.stripFormatting(line.getString()))
                 .filter(line -> line != null && !line.isBlank())
                 .map(line -> line.split("\\. ", 2))
                 .filter(parts -> parts.length > 1)
@@ -276,7 +276,7 @@ public class GTBEvents {
         emit(new GameEndEvent(actualScores));
     }
 
-    private void onScreenTitle(Text screenTitle) {
+    private void onScreenTitle(Component screenTitle) {
         if (!(gameState.equals(GameState.ROUND_PRE) || gameState.equals(GameState.ROUND_END))) return;
         if (screenTitle.getString().equals("Select a theme to build!")) {
             if (scoreboardLineHistory.size() == 0) return;
@@ -315,18 +315,18 @@ public class GTBEvents {
         return null;
     }
 
-    private void onSubtitleSet(Text subtitle) {
+    private void onSubtitleSet(Component subtitle) {
         if (gameState.equals(GameState.ROUND_BUILD)
-                && Objects.equals(Formatting.strip(subtitle.getString()), "1 second remaining!")) {
+                && Objects.equals(ChatFormatting.stripFormatting(subtitle.getString()), "1 second remaining!")) {
             emit(new OneSecondAlertEvent());
         }
     }
 
-    private void onTitleSet(Text title) {
+    private void onTitleSet(Component title) {
     }
 
-    private void onActionBarMessage(Text actionBarMessage) {
-        String strMessage = Formatting.strip(actionBarMessage.getString());
+    private void onActionBarMessage(Component actionBarMessage) {
+        String strMessage = ChatFormatting.stripFormatting(actionBarMessage.getString());
         if (strMessage == null || strMessage.isEmpty()) return;
 
         if (strMessage.startsWith("The theme is ") && gameState.equals(GameState.ROUND_BUILD)) {
@@ -338,10 +338,10 @@ public class GTBEvents {
         }
     }
 
-    private void onChatMessages(List<Text> chatMessages) {
+    private void onChatMessages(List<Component> chatMessages) {
         List<FormattedName> correctGuessers = new ArrayList<>();
-        for (Text message : chatMessages) {
-            String strMessage = Formatting.strip(message.getString());
+        for (Component message : chatMessages) {
+            String strMessage = ChatFormatting.stripFormatting(message.getString());
             if (strMessage == null || strMessage.isEmpty()) continue;
 
             if (gameState.equals(GameState.ROUND_PRE) && strMessage.startsWith("Round: ") && strMessage.contains("/")) {
@@ -371,7 +371,7 @@ public class GTBEvents {
             if (gameState.equals(GameState.ROUND_BUILD) && !strMessage.contains(":")
                     && strMessage.endsWith(" correctly guessed the theme!")) {
                 String name = strMessage.replace(" correctly guessed the theme!", "");
-                Formatting rank = Formatting.byName(Objects.requireNonNull(message.getSiblings().get(0).getStyle().getColor()).getName());
+                ChatFormatting rank = ChatFormatting.getByName(Objects.requireNonNull(message.getSiblings().get(0).getStyle().getColor()).serialize());
                 correctGuessers.add(new FormattedName(name, rank));
             }
 
@@ -424,8 +424,8 @@ public class GTBEvents {
         if (!correctGuessers.isEmpty()) emit(new CorrectGuessEvent(correctGuessers));
     }
 
-    private String getBuilderNameFromScoreboard(List<Text> scoreboardLines) {
-        List<String> strLines = scoreboardLines.stream().map(line -> Formatting.strip(line.getString())).toList();
+    private String getBuilderNameFromScoreboard(List<Component> scoreboardLines) {
+        List<String> strLines = scoreboardLines.stream().map(line -> ChatFormatting.stripFormatting(line.getString())).toList();
         int builderLine = strLines.indexOf("Builder:");
         if (builderLine == -1 || strLines.size() <= builderLine + 1) return "";
 
@@ -461,31 +461,31 @@ public class GTBEvents {
         return null;
     }
 
-    public List<TrueScore> getTrueScoresFromScoreboard(List<Text> scoreboardLines) {
+    public List<TrueScore> getTrueScoresFromScoreboard(List<Component> scoreboardLines) {
         List<TrueScore> trueScores = new ArrayList<>();
-        List<String> stringLines = scoreboardLines.stream().map(line -> Formatting.strip(line.getString())).toList();
+        List<String> stringLines = scoreboardLines.stream().map(line -> ChatFormatting.stripFormatting(line.getString())).toList();
 
         for (int i = 0; i < stringLines.size(); i++) {
             String[] parts = stringLines.get(i).split(": ");
             if (parts.length != 2) continue;
             if (!parts[0].contains(" ") && parts[1].matches("\\d{1,2}")) {
-                Text line = scoreboardLines.get(i);
+                Component line = scoreboardLines.get(i);
                 TextColor color = null;
-                Formatting rank = null;
+                ChatFormatting rank = null;
                 if (line.getSiblings().get(0).getSiblings().isEmpty()) {
                     if (line.getSiblings().get(0).getStyle().getColor() != null) {
                         color = line.getSiblings().get(0).getStyle().getColor();
-                        rank = Formatting.byName(color.getName());
+                        rank = ChatFormatting.getByName(color.serialize());
                     } else {
-                        String content = line.getSiblings().get(0).getContent().toString();
+                        String content = line.getSiblings().get(0).getContents().toString();
                         if (content.length() >= 2 && content.charAt(0) == '§') {
                             char colorChar = content.charAt(1);
-                            rank = Formatting.byCode(colorChar);
+                            rank = ChatFormatting.getByCode(colorChar);
                         }
                     }
                 } else {
                     color = line.getSiblings().get(0).getSiblings().get(0).getStyle().getColor();
-                    rank = Formatting.byName(color.getName());
+                    rank = ChatFormatting.getByName(color.serialize());
                 }
                 trueScores.add(new TrueScore(new FormattedName(parts[0], rank), Integer.parseInt(parts[1])));
             }
@@ -626,12 +626,12 @@ public class GTBEvents {
 
     public static class InitialPlayerData {
         public final String name;
-        public final Text title;
-        public final Text emblem;
-        public Formatting rankColor;
+        public final Component title;
+        public final Component emblem;
+        public ChatFormatting rankColor;
         public boolean isUser;
 
-        public InitialPlayerData(String name, Text title, Text emblem, Formatting rankColor, boolean isUser) {
+        public InitialPlayerData(String name, Component title, Component emblem, ChatFormatting rankColor, boolean isUser) {
             this.name = name;
             this.title = title;
             this.emblem = emblem;
@@ -662,7 +662,7 @@ public class GTBEvents {
         }
     }
 
-    public record PlayerChatMessage(String name, Text title, Text emblem, Text rank, String message) {
+    public record PlayerChatMessage(String name, Component title, Component emblem, Component rank, String message) {
         @Override
         public boolean equals(Object o) {
             if (o == null || getClass() != o.getClass()) return false;
@@ -728,7 +728,7 @@ public class GTBEvents {
         }
     }
 
-    public record FormattedName(String name, Formatting rankColor) {
+    public record FormattedName(String name, ChatFormatting rankColor) {
         @Override
         public boolean equals(Object o) {
             if (o == null || getClass() != o.getClass()) return false;

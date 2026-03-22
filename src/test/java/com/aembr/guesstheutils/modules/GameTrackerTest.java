@@ -3,7 +3,7 @@ package com.aembr.guesstheutils.modules;
 import com.aembr.guesstheutils.GTBEvents;
 import com.aembr.guesstheutils.TestRunner;
 import com.aembr.guesstheutils.Tick;
-import net.minecraft.Bootstrap;
+import net.minecraft.server.Bootstrap;
 import net.minecraft.SharedConstants;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,8 +27,8 @@ public class GameTrackerTest {
 
     @BeforeAll
     public static void beforeAll() {
-        SharedConstants.createGameVersion();
-        Bootstrap.initialize();
+        SharedConstants.tryDetectVersion();
+        Bootstrap.bootStrap();
     }
 
     @BeforeEach

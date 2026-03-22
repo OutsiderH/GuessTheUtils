@@ -6,9 +6,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.isxander.yacl3.platform.YACLPlatform;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.Component;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -70,8 +70,8 @@ public class Replay {
         /*ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/guesstheutils replay open");
         *///?}
 
-        Message.displayMessage(Text.literal("Replay " + filename + " saved. ")
-                .append(Text.literal("[Open folder]").setStyle(Style.EMPTY.withClickEvent(clickEvent))));
+        Message.displayMessage(Component.literal("Replay " + filename + " saved. ")
+                .append(Component.literal("[Open folder]").setStyle(Style.EMPTY.withClickEvent(clickEvent))));
     }
 
     public static List<JsonObject> load(File filePath) {

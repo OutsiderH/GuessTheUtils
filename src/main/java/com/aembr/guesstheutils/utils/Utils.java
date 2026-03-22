@@ -1,11 +1,15 @@
 package com.aembr.guesstheutils.utils;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.scoreboard.*;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.scores.DisplaySlot;
+import net.minecraft.world.scores.Objective;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.ScoreHolder;
+import net.minecraft.world.scores.Scoreboard;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintWriter;
@@ -13,46 +17,46 @@ import java.io.StringWriter;
 import java.util.*;
 
 public class Utils {
-    public static List<Text> getScoreboardLines(MinecraftClient client) {
-        HashMap<Text, Integer> scoredLines = new HashMap<>();
-        ClientPlayerEntity player = client.player;
+    public static List<Component> getScoreboardLines(Minecraft client) {
+        HashMap<Component, Integer> scoredLines = new HashMap<>();
+        LocalPlayer player = client.player;
         if (player == null) return new ArrayList<>();
 
-        Scoreboard scoreboard = player.networkHandler.getScoreboard();
-        ScoreboardObjective objective = scoreboard.getObjectiveForSlot(ScoreboardDisplaySlot.FROM_ID.apply(1));
+        Scoreboard scoreboard = player.connection.scoreboard();
+        Objective objective = scoreboard.getDisplayObjective(DisplaySlot.BY_ID.apply(1));
 
-        for (ScoreHolder scoreHolder : scoreboard.getKnownScoreHolders()) {
-            if (!scoreboard.getScoreHolderObjectives(scoreHolder).containsKey(objective)) continue;
+        for (ScoreHolder scoreHolder : scoreboard.getTrackedPlayers()) {
+            if (!scoreboard.listPlayerScores(scoreHolder).containsKey(objective)) continue;
 
-            Team team = scoreboard.getScoreHolderTeam(scoreHolder.getNameForScoreboard());
+            PlayerTeam team = scoreboard.getPlayersTeam(scoreHolder.getScoreboardName());
             if (team == null) continue;
 
-            Text textLine = Text.empty().append(team.getPrefix().copy()).append(team.getSuffix().copy());
-            String strLine = team.getPrefix().getString() + team.getSuffix().getString();
+            Component textLine = Component.empty().append(team.getPlayerPrefix().copy()).append(team.getPlayerSuffix().copy());
+            String strLine = team.getPlayerPrefix().getString() + team.getPlayerSuffix().getString();
 
             if (strLine.trim().isEmpty()) continue;
 
-            int teamScore = Objects.requireNonNull(scoreboard.getScore(scoreHolder, objective)).getScore();
+            int teamScore = Objects.requireNonNull(scoreboard.getPlayerScoreInfo(scoreHolder, objective)).value();
             scoredLines.put(textLine, teamScore);
         }
         // The objective name is usually animated, and the formatting doesn't convey any info, so we strip it
-        if (objective != null) scoredLines.put(Text.of(Formatting.strip(objective.getDisplayName().getString())), Integer.MAX_VALUE);
+        if (objective != null) scoredLines.put(Component.nullToEmpty(ChatFormatting.stripFormatting(objective.getDisplayName().getString())), Integer.MAX_VALUE);
 
         return scoredLines.entrySet().stream().sorted((e1, e2) ->
                 Integer.compare(e2.getValue(), e1.getValue())).map(Map.Entry::getKey).toList();
     }
 
-    public static List<Text> collectTabListEntries(MinecraftClient client) {
+    public static List<Component> collectTabListEntries(Minecraft client) {
         if (client.player == null) return new ArrayList<>();
 
-        return client.world.getPlayers().stream().map(entry -> {
-            MutableText entryText;
+        return client.level.players().stream().map(entry -> {
+            MutableComponent entryText;
             if (entry.getDisplayName() != null) {
                 entryText = entry.getDisplayName().copy();
             } else {
                 entryText = entry.getName().copy();
             }
-            return (Text) entryText;
+            return (Component) entryText;
         }).toList();
     }
 

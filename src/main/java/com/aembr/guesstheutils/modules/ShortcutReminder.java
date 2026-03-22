@@ -4,16 +4,19 @@ import com.aembr.guesstheutils.GTBEvents;
 import com.aembr.guesstheutils.utils.Message;
 import com.aembr.guesstheutils.utils.TranslationData;
 import com.aembr.guesstheutils.config.GuessTheUtilsConfig;
-import net.minecraft.text.*;
-import net.minecraft.util.Formatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.ChatFormatting;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class ShortcutReminder extends GTBEvents.Module {
-    private static final Formatting SHORTCUT_COLOR = Formatting.GOLD;
-    private static final Formatting THEME_COLOR = Formatting.GREEN;
-    private static final Formatting SHOW_ALL_TEXT_COLOR = Formatting.YELLOW;
+    private static final ChatFormatting SHORTCUT_COLOR = ChatFormatting.GOLD;
+    private static final ChatFormatting THEME_COLOR = ChatFormatting.GREEN;
+    private static final ChatFormatting SHOW_ALL_TEXT_COLOR = ChatFormatting.YELLOW;
 
     String currentTheme = "";
     List<ShortcutEntry> currentShortcuts = new ArrayList<>();
@@ -59,13 +62,13 @@ public class ShortcutReminder extends GTBEvents.Module {
                 GuessTheUtilsConfig.CONFIG.instance().shortcutReminderFilterType);
 
         if (currentShortcuts.isEmpty()) {
-            Message.displayMessage(Text.literal("No shortcuts for ")
-                    .append(Text.literal(currentTheme).formatted(THEME_COLOR))
-                    .append(Text.literal(".")));
+            Message.displayMessage(Component.literal("No shortcuts for ")
+                    .append(Component.literal(currentTheme).withStyle(THEME_COLOR))
+                    .append(Component.literal(".")));
             return;
         }
 
-        MutableText showAllText = Text.empty();
+        MutableComponent showAllText = Component.empty();
 
         if (filteredShortcuts.size() != currentShortcuts.size()) {
             //? if >=1.21.5 {
@@ -74,19 +77,19 @@ public class ShortcutReminder extends GTBEvents.Module {
             /*HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT,compileShortcutsText(currentShortcuts));
              *///?}
 
-            showAllText = Text.literal("[Show All]")
+            showAllText = Component.literal("[Show All]")
                     .setStyle(Style.EMPTY.withHoverEvent(hoverEvent).withColor(SHOW_ALL_TEXT_COLOR));
         }
 
         if (filteredShortcuts.isEmpty()) {
-            Message.displayMessage(Text.literal("No suitable shortcuts for ")
-                    .append(Text.literal(currentTheme).formatted(THEME_COLOR))
-                    .append(Text.literal(" found. "))
+            Message.displayMessage(Component.literal("No suitable shortcuts for ")
+                    .append(Component.literal(currentTheme).withStyle(THEME_COLOR))
+                    .append(Component.literal(" found. "))
                     .append(showAllText));
         } else {
-            Message.displayMessage(Text.literal("Shortcuts for ")
-                    .append(Text.literal(currentTheme).formatted(THEME_COLOR))
-                    .append(Text.literal(": "))
+            Message.displayMessage(Component.literal("Shortcuts for ")
+                    .append(Component.literal(currentTheme).withStyle(THEME_COLOR))
+                    .append(Component.literal(": "))
                     .append(showAllText)
                     .append("\n")
                     .append(compileShortcutsText(filteredShortcuts)));
@@ -116,37 +119,37 @@ public class ShortcutReminder extends GTBEvents.Module {
         return result;
     }
 
-    private Text compileShortcutsText(List<ShortcutEntry> shortcuts) {
+    private Component compileShortcutsText(List<ShortcutEntry> shortcuts) {
         shortcuts.sort(Comparator.comparingInt(ShortcutEntry::getShortcutLength)
                 .thenComparing(Comparator.comparingInt(ShortcutEntry::getThemeCount).reversed()));
 
-        MutableText text = Text.empty();
+        MutableComponent text = Component.empty();
         for (int i = 0; i < shortcuts.size(); i++) {
             ShortcutEntry entry = shortcuts.get(i);
             String shortcut = entry.shortcut;
             List<String> themes = entry.themes;
 
-            MutableText shortcutText =
-                    Text.literal(" • ").formatted(Formatting.GRAY)
-                            .append(Text.literal(shortcut)
-                                    .formatted(SHORTCUT_COLOR)
-                                    .formatted(Formatting.BOLD));
+            MutableComponent shortcutText =
+                    Component.literal(" • ").withStyle(ChatFormatting.GRAY)
+                            .append(Component.literal(shortcut)
+                                    .withStyle(SHORTCUT_COLOR)
+                                    .withStyle(ChatFormatting.BOLD));
 
-            shortcutText.append(Text.literal(": ").formatted(Formatting.GRAY));
+            shortcutText.append(Component.literal(": ").withStyle(ChatFormatting.GRAY));
 
             for (int j = 0; j < themes.size(); j++) {
-                MutableText themeText = Text.literal(themes.get(j))
-                        .formatted(THEME_COLOR);
+                MutableComponent themeText = Component.literal(themes.get(j))
+                        .withStyle(THEME_COLOR);
 
                 shortcutText.append(themeText);
 
                 if (j < themes.size() - 1) {
-                    shortcutText.append(Text.literal(" / ").formatted(Formatting.GRAY));
+                    shortcutText.append(Component.literal(" / ").withStyle(ChatFormatting.GRAY));
                 }
             }
 
             if (i < shortcuts.size() - 1) {
-                shortcutText.append(Text.literal("\n"));
+                shortcutText.append(Component.literal("\n"));
             }
 
             text.append(shortcutText);
