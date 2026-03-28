@@ -10,7 +10,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 //?}
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //? if >=1.21.6
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.world.entity.Entity;
@@ -49,7 +49,7 @@ public class ChatCooldownTimer extends GTBEvents.Module /*? >=1.21.6 {*/ impleme
         events.subscribe(GTBEvents.UserLeaveEvent.class, e -> disable(), this);
     }
 
-    public void render(GuiGraphics ctx /*? >=1.21.6 {*/ , DeltaTracker tickCounter /*?}*/) {
+    public void extractRenderState(GuiGraphicsExtractor ctx /*? >=1.21.6 {*/ , DeltaTracker tickCounter /*?}*/) {
         if (cooldown == 3000 || cooldown <= 0 || !GuessTheUtilsConfig.CONFIG.instance().enableChatCooldownModule
                 || !GuessTheUtilsConfig.CONFIG.instance().chatCooldownTimer) return;
         String timerText = formatCooldown(cooldown);
@@ -59,7 +59,7 @@ public class ChatCooldownTimer extends GTBEvents.Module /*? >=1.21.6 {*/ impleme
         int x2 = x1 + renderer.width(timerText);
         int y2 = y1 + renderer.lineHeight - 1;
         ctx.fill(x1 - 2, y1 - 2, x2 + 1, y2 + 1, 0x66000000);
-        ctx.drawString(renderer, timerText, x1, y1, 0xFFFFFF00, true);
+        ctx.text(renderer, timerText, x1, y1, 0xFFFFFF00, true);
     }
 
     public void onMessageSent() {

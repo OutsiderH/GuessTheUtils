@@ -9,7 +9,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 //?}
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 //? if >=1.21.6
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.network.chat.MutableComponent;
@@ -105,18 +105,18 @@ public class CustomScoreboard /*? >=1.21.6 {*/ implements HudElement /*?}*/ {
         return frames[frames.length - 1 - index]; // uhh it's reversed lol
     }
 
-    private static void drawTextRightAligned(GuiGraphics context, Font renderer, String string, int x, int y,
+    private static void textRightAligned(GuiGraphicsExtractor context, Font renderer, String string, int x, int y,
                                              int color, boolean shadow) {
-        context.drawString(renderer, string, x - renderer.width(string), y, color, shadow);
+        context.text(renderer, string, x - renderer.width(string), y, color, shadow);
     }
 
-    private static void drawTextRightAligned(GuiGraphics context, Font renderer, Component text, int x, int y,
+    private static void textRightAligned(GuiGraphicsExtractor context, Font renderer, Component text, int x, int y,
                                              int color, boolean shadow) {
-        context.drawString(renderer, text, x - renderer.width(text), y, color, shadow);
+        context.text(renderer, text, x - renderer.width(text), y, color, shadow);
     }
 
     @SuppressWarnings({"unused", "SameParameterValue", "DuplicateExpressions"})
-    private static int drawLine(GuiGraphics context, Font renderer, ScoreboardLine line, int x, int y,
+    private static int line(GuiGraphicsExtractor context, Font renderer, ScoreboardLine line, int x, int y,
                                 int width, int linePadding, boolean includeTitles, boolean includeEmblems,
                                 boolean includeRoundPoints, int lineItemSpacing, int lineSpacing, int backgroundColor,
                                 int textColor, ChatFormatting textColorFormatting, int textColorInactive, int textColorPointsThisRound,
@@ -172,7 +172,7 @@ public class CustomScoreboard /*? >=1.21.6 {*/ implements HudElement /*?}*/ {
 
             // Build Icon BG
             Component builderIconBg = Component.literal(BUILD_BG_ICON).withStyle(notBuiltIconColor);
-            drawTextRightAligned(context, renderer, builderIconBg, itemX - linePadding - lineItemSpacing, itemY, rgbToArgb(textColor, notBuildIconOpacity), shadow);
+            textRightAligned(context, renderer, builderIconBg, itemX - linePadding - lineItemSpacing, itemY, rgbToArgb(textColor, notBuildIconOpacity), shadow);
 
             // Build Icon Check or Spinner
             if (player.buildRound != 0) {
@@ -181,14 +181,14 @@ public class CustomScoreboard /*? >=1.21.6 {*/ implements HudElement /*?}*/ {
                     builderIconFg = Component.literal(getSpinnerFrame(BUILDING_SPINNER, 1, tickCounter))
                             .withStyle(accentColorBuilder);
                 }
-                context.drawString(renderer, builderIconFg, itemX - linePadding - lineItemSpacing - renderer.width(builderIconBg), itemY, textColor, shadow);
+                context.text(renderer, builderIconFg, itemX - linePadding - lineItemSpacing - renderer.width(builderIconBg), itemY, textColor, shadow);
             }
 
             // Places
             if (includePlaces) {
                 int placeWidth = game.players.size() == 10 ? renderer.width("00") : renderer.width("0");
                 Component place = Component.literal(String.valueOf(playerPlace)).withStyle(textColorFormatting);
-                drawTextRightAligned(context, renderer, place, itemX + placeWidth, itemY, fgColor, shadow);
+                textRightAligned(context, renderer, place, itemX + placeWidth, itemY, fgColor, shadow);
                 itemX += placeWidth + lineItemSpacing;
             }
 
@@ -200,7 +200,7 @@ public class CustomScoreboard /*? >=1.21.6 {*/ implements HudElement /*?}*/ {
                 badge = Component.literal(INACTIVE_ICON).withStyle(inactiveIconColor);
             }
             if (!badge.getString().isEmpty()) {
-                context.drawString(renderer, badge, itemX, itemY, textColor, shadow);
+                context.text(renderer, badge, itemX, itemY, textColor, shadow);
                 itemX += renderer.width(badge) + lineItemSpacing;
             }
 
@@ -217,7 +217,7 @@ public class CustomScoreboard /*? >=1.21.6 {*/ implements HudElement /*?}*/ {
                 name = title.append(Component.literal(" ")).append(name);
             }
 
-            context.drawString(renderer, name, itemX, itemY, fgColor, shadow);
+            context.text(renderer, name, itemX, itemY, fgColor, shadow);
 
             // Points
             itemX = x + width - linePadding;
@@ -229,7 +229,7 @@ public class CustomScoreboard /*? >=1.21.6 {*/ implements HudElement /*?}*/ {
 
             int pointsWidth = (player.getTotalPoints() < 10 ? renderer.width("0") : renderer.width("00")) + 1;
 
-            drawTextRightAligned(context, renderer, points, itemX, itemY, fgColor, shadow);
+            textRightAligned(context, renderer, points, itemX, itemY, fgColor, shadow);
 
             // Points this round
             if (!isRoundPre && pointsThisRound > 0 && includeRoundPoints) {
@@ -244,7 +244,7 @@ public class CustomScoreboard /*? >=1.21.6 {*/ implements HudElement /*?}*/ {
                         case 1: pointsThisRoundIcon.withStyle(pointsThisRoundColor1);
                     }
                 }
-                drawTextRightAligned(context, renderer, pointsThisRoundIcon, itemX, itemY, textColorPointsThisRound, shadow);
+                textRightAligned(context, renderer, pointsThisRoundIcon, itemX, itemY, textColorPointsThisRound, shadow);
             }
 
         }
@@ -253,7 +253,7 @@ public class CustomScoreboard /*? >=1.21.6 {*/ implements HudElement /*?}*/ {
             context.fill(x, y, x + width, y + renderer.lineHeight - 2 + linePadding * 2, backgroundColor);
 
             for (Component item : ((TextLine) line).left()) {
-                context.drawString(renderer, item, itemX, itemY, textColor, shadow);
+                context.text(renderer, item, itemX, itemY, textColor, shadow);
                 itemX += renderer.width(item) + lineItemSpacing;
             }
 
@@ -264,14 +264,14 @@ public class CustomScoreboard /*? >=1.21.6 {*/ implements HudElement /*?}*/ {
             itemX = x + width / 2 - centerItemsWidth.get() / 2;
 
             for (Component item : ((TextLine) line).center()) {
-                context.drawString(renderer, item, itemX, itemY, textColor, shadow);
+                context.text(renderer, item, itemX, itemY, textColor, shadow);
                 itemX += renderer.width(item) + lineItemSpacing;
             }
 
             itemX = x + width - linePadding;
 
             for (Component item : ((TextLine) line).right()) {
-                drawTextRightAligned(context, renderer, item, itemX, itemY, textColor, shadow);
+                textRightAligned(context, renderer, item, itemX, itemY, textColor, shadow);
                 itemX -= renderer.width(item) + lineItemSpacing;
             }
         }
@@ -350,7 +350,7 @@ public class CustomScoreboard /*? >=1.21.6 {*/ implements HudElement /*?}*/ {
     @SuppressWarnings({"DataFlowIssue"})
     //? if >=1.21.6
     @Override
-    public void render(GuiGraphics context /*? >=1.21.6 {*/ , DeltaTracker tickCounter /*?}*/) {
+    public void extractRenderState(GuiGraphicsExtractor context /*? >=1.21.6 {*/ , DeltaTracker tickCounter /*?}*/) {
         try {
             if (tracker == null || tracker.game == null || !events.isInGtb()
                     || !GuessTheUtilsConfig.CONFIG.instance().enableCustomScoreboardModule) return;
@@ -453,7 +453,7 @@ public class CustomScoreboard /*? >=1.21.6 {*/ implements HudElement /*?}*/ {
 
             int playerPlace = 1;
             for (ScoreboardLine line : lines) {
-                int lineHeight = drawLine(context, renderer, line, x, y, width, linePadding, includeTitles,
+                int lineHeight = line(context, renderer, line, x, y, width, linePadding, includeTitles,
                         includeEmblems, includePointsGained, lineItemSpacing, lineSpacing, bgColor, fgColor, textColor,
                         fgColorInactive, fgColorPointsThisRound, accentColor, accentColorBuilder,
                         backgroundHighlightColor, backgroundHighlightColorBuilder, notBuiltIconColor,

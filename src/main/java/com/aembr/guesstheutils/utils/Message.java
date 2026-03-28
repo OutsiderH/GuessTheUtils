@@ -18,12 +18,12 @@ public class Message {
 
     public static void displayMessage(String message) {
         if (GuessTheUtils.CLIENT == null || GuessTheUtils.CLIENT.player == null) return;
-        GuessTheUtils.CLIENT.player.displayClientMessage(GuessTheUtils.prefix.copy()
-                .append(Component.literal(message).withStyle(ChatFormatting.GRAY)), false);
+        GuessTheUtils.CLIENT.player.sendSystemMessage(GuessTheUtils.prefix.copy()
+                .append(Component.literal(message).withStyle(ChatFormatting.GRAY)));
     }
 
     public static void displayMessage(Component message) {
         if (GuessTheUtils.CLIENT == null || GuessTheUtils.CLIENT.player == null) return;
-        GuessTheUtils.CLIENT.player.displayClientMessage(GuessTheUtils.prefix.copy().append(message), false);
+        GuessTheUtils.CLIENT.player.sendSystemMessage(GuessTheUtils.prefix.copy().append(message));
     }
 }

@@ -1,7 +1,7 @@
 package com.aembr.guesstheutils.mixin;
 
 import com.aembr.guesstheutils.GuessTheUtils;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.network.chat.Component;

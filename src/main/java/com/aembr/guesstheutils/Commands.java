@@ -6,7 +6,7 @@ import com.aembr.guesstheutils.utils.TranslationData;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -19,36 +19,29 @@ import java.util.Map;
 
 public class Commands {
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
-        dispatcher.register(ClientCommandManager.literal("guesstheutils")
-                .then(ClientCommandManager.literal("replay")
-                        .then(ClientCommandManager.literal("save")
+        dispatcher.register(ClientCommands.literal("guesstheutils")
+                .then(ClientCommands.literal("replay")
+                        .then(ClientCommands.literal("save")
                             .executes((command) -> {
                                 GuessTheUtils.replay.save();
                                 return Command.SINGLE_SUCCESS;
                             }))
 
-                        .then(ClientCommandManager.literal("open")
+                        .then(ClientCommands.literal("open")
                             .executes((command) -> {
                                 Util.getPlatform().openPath(Replay.replayDir);
                                 return Command.SINGLE_SUCCESS;
                             })))
 
-//                .then(ClientCommandManager.literal("livetest")
-//                        .executes((command) -> {
-//                            GuessTheUtils.testing = !GuessTheUtils.testing;
-//                            if (GuessTheUtils.testing) GuessTheUtils.liveE2ERunner.currentTick = 0;
-//                            return Command.SINGLE_SUCCESS;
-//                        }))
-
-                .then(ClientCommandManager.literal("config")
+                .then(ClientCommands.literal("config")
                         .executes((command) -> {
                             GuessTheUtils.openConfig = true;
                             return Command.SINGLE_SUCCESS;
                         }))
         );
 
-        dispatcher.register(ClientCommandManager.literal("gettranslation")
-                .then(ClientCommandManager.argument("theme", StringArgumentType.string())
+        dispatcher.register(ClientCommands.literal("gettranslation")
+                .then(ClientCommands.argument("theme", StringArgumentType.string())
                         .suggests((ctx, builder) -> {
                             TranslationData.entries.stream()
                                     .map(TranslationData.TranslationDataEntry::theme)
@@ -57,7 +50,7 @@ public class Commands {
                                     .forEach(builder::suggest);
                             return builder.buildFuture();
                         })
-                        .then(ClientCommandManager.argument("language", StringArgumentType.word())
+                        .then(ClientCommands.argument("language", StringArgumentType.word())
                                 .suggests((ctx, builder) -> {
                                     String themeWithUnderscores = StringArgumentType.getString(ctx, "theme");
                                     String theme = themeWithUnderscores.replace("_", " ");
@@ -81,13 +74,13 @@ public class Commands {
                                     return Command.SINGLE_SUCCESS;
                                 }))));
 
-        dispatcher.register(ClientCommandManager.literal("qgtb")
+        dispatcher.register(ClientCommands.literal("qgtb")
                 .executes(command -> {
                     Message.sendMessage("/queue build_battle_guess_the_build");
                     return Command.SINGLE_SUCCESS;
                 }));
 
-        dispatcher.register(ClientCommandManager.literal("lrj")
+        dispatcher.register(ClientCommands.literal("lrj")
                 .executes(command -> {
                     Message.sendMessage("/hub");
                     Scheduler.schedule(30, () -> Message.sendMessage("/back"));

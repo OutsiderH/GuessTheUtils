@@ -1,6 +1,6 @@
 plugins {
 	`maven-publish`
-	id("fabric-loom")
+	id("net.fabricmc.fabric-loom")
 }
 
 version = "${property("mod.version")}+${stonecutter.current.version}"
@@ -38,18 +38,17 @@ dependencies {
 	 * @see <a href="https://github.com/FabricMC/fabric">List of Fabric API modules</a>
 	 */
 	fun fapi(vararg modules: String) {
-		for (it in modules) modImplementation(fabricApi.module(it, property("deps.fabric_api") as String))
+		for (it in modules) implementation(fabricApi.module(it, property("deps.fabric_api") as String))
 	}
 
 	minecraft("com.mojang:minecraft:${stonecutter.current.version}")
-	mappings(loom.officialMojangMappings())
-	modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
-	modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
+	implementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
+	implementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
 
 	testImplementation("net.fabricmc:fabric-loader-junit:${property("deps.fabric_loader")}")
 
-	modImplementation("dev.isxander:yet-another-config-lib:${property("deps.yacl")}")
-	modImplementation("com.terraformersmc:modmenu:${property("deps.modmenu")}")
+	implementation("dev.isxander:yet-another-config-lib:${property("deps.yacl")}")
+	implementation("com.terraformersmc:modmenu:${property("deps.modmenu")}")
 
 	fapi("fabric-lifecycle-events-v1",)
 }
@@ -71,13 +70,7 @@ loom {
 }
 
 java {
-	withSourcesJar()
-	val requiresJava21: Boolean = stonecutter.eval(stonecutter.current.version, ">=1.20.6")
-	val javaVersion: JavaVersion =
-		if (requiresJava21) JavaVersion.VERSION_21
-		else JavaVersion.VERSION_17
-	targetCompatibility = javaVersion
-	sourceCompatibility = javaVersion
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 tasks {
@@ -106,7 +99,7 @@ tasks {
 	// Builds the version into a shared folder in `build/libs/${mod version}/`
 	register<Copy>("buildAndCollect") {
 		group = "build"
-		from(remapJar.map { it.archiveFile }, remapSourcesJar.map { it.archiveFile })
+		from(jar.map { it.archiveFile })
 		into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
 		dependsOn("build")
 	}
