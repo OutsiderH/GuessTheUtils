@@ -5,6 +5,7 @@ import com.aembr.guesstheutils.config.GuessTheUtilsConfig;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 public class FileUtils {
@@ -28,7 +29,7 @@ public class FileUtils {
             throw new IOException("Failed to download file: " + fileUrl);
         }
 
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharSets.UTF_8));
              StringWriter writer = new StringWriter()) {
             String line;
             while ((line = in.readLine()) != null) {

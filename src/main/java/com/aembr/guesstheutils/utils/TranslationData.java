@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +57,7 @@ public class TranslationData {
         Gson gson = new Gson();
         Type translationDataType = new TypeToken<List<TranslationDataEntry>>() {}.getType();
 
-        try (FileReader reader = new FileReader(configFile)) {
+        try (FileReader reader = new FileReader(configFile, StandardCharSets.UTF_8)) {
             return gson.fromJson(reader, translationDataType);
         } catch (IOException e) {
             GuessTheUtils.LOGGER.error(e.getMessage());
