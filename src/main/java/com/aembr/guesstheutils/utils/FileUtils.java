@@ -29,7 +29,7 @@ public class FileUtils {
             throw new IOException("Failed to download file: " + fileUrl);
         }
 
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharSets.UTF_8));
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
              StringWriter writer = new StringWriter()) {
             String line;
             while ((line = in.readLine()) != null) {

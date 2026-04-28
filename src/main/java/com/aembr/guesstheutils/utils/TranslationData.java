@@ -57,7 +57,7 @@ public class TranslationData {
         Gson gson = new Gson();
         Type translationDataType = new TypeToken<List<TranslationDataEntry>>() {}.getType();
 
-        try (FileReader reader = new FileReader(configFile, StandardCharSets.UTF_8)) {
+        try (FileReader reader = new FileReader(configFile, StandardCharsets.UTF_8)) {
             return gson.fromJson(reader, translationDataType);
         } catch (IOException e) {
             GuessTheUtils.LOGGER.error(e.getMessage());
